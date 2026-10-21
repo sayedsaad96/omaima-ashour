@@ -1,0 +1,413 @@
+@import "tailwindcss";
+
+/* ============ Design tokens: light (default) ============ */
+:root {
+  color-scheme: light;
+  --bg: #fbf7f1;
+  --surface: #ffffff;
+  --ink: #1c2b2e;
+  --muted: #62706f;
+  --primary: #147483;
+  --primary-text: #0e6272;
+  --primary-soft: #e1eff1;
+  --primary-mid: #0f5a68;
+  --primary-deep: #0a4854;
+  --accent: #ff8a5b;
+  --accent-soft: #fff0e9;
+  --mint: #e0f2ec;
+  --border: #e5e5dc;
+  --success: #2d8f68;
+  --success-dark: #175c40;
+  --whatsapp: #0b6e41;
+  --spotlight: #14323a;
+  --on-spotlight: #f4f8f8;
+  --danger-bg: #fef2f2;
+  --danger-text: #b91c1c;
+  --radius-card: 1.5rem;
+  --shadow-soft: 0 20px 55px rgba(16, 58, 66, 0.1);
+  --shadow-lift: 0 28px 70px rgba(16, 58, 66, 0.18);
+}
+
+/* ============ Design tokens: dark ============ */
+[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0f1719;
+  --surface: #172427;
+  --ink: #f0f5f4;
+  --muted: #9db1b1;
+  --primary: #1a7d8d;
+  --primary-text: #57b8c8;
+  --primary-soft: #0f343b;
+  --primary-mid: #0f5a68;
+  --primary-deep: #0a4854;
+  --accent: #ff8a5b;
+  --accent-soft: #3a2418;
+  --mint: #103b35;
+  --border: #2a3a3d;
+  --success: #2d8f68;
+  --success-dark: #8fe3b8;
+  --whatsapp: #0b6e41;
+  --spotlight: #142a2f;
+  --on-spotlight: #f0f5f4;
+  --danger-bg: #3b1414;
+  --danger-text: #fca5a5;
+  --shadow-soft: 0 20px 55px rgba(0, 0, 0, 0.45);
+  --shadow-lift: 0 28px 70px rgba(0, 0, 0, 0.55);
+}
+
+/* First-paint fallback: follow the system palette even before any JS runs
+   (including when the init script is deferred by the Next.js bootstrap).
+   A stored explicit choice always wins, hence NOT matching [data-theme=light]. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #0f1719;
+    --surface: #172427;
+    --ink: #f0f5f4;
+    --muted: #9db1b1;
+    --primary: #1a7d8d;
+    --primary-text: #57b8c8;
+    --primary-soft: #0f343b;
+    --primary-mid: #0f5a68;
+    --primary-deep: #0a4854;
+    --accent: #ff8a5b;
+    --accent-soft: #3a2418;
+    --mint: #103b35;
+    --border: #2a3a3d;
+    --success: #2d8f68;
+    --success-dark: #8fe3b8;
+    --whatsapp: #0b6e41;
+    --spotlight: #142a2f;
+    --on-spotlight: #f0f5f4;
+    --danger-bg: #3b1414;
+    --danger-text: #fca5a5;
+    --shadow-soft: 0 20px 55px rgba(0, 0, 0, 0.45);
+    --shadow-lift: 0 28px 70px rgba(0, 0, 0, 0.55);
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-primary: var(--primary);
+  --color-primary-text: var(--primary-text);
+  --color-primary-soft: var(--primary-soft);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-mint: var(--mint);
+  --color-border: var(--border);
+  --color-success: var(--success);
+  --color-success-dark: var(--success-dark);
+  --color-whatsapp: var(--whatsapp);
+  --color-spotlight: var(--spotlight);
+  --color-on-spotlight: var(--on-spotlight);
+  --font-sans: var(--font-sans);
+  --font-arabic: var(--font-arabic);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Balanced headlines + display-type presence across the app. */
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+h1 {
+  letter-spacing: -0.02em;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+}
+
+/* Smooth theme switching on the app shell (children snap instantly). */
+.theme-fade {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+::selection {
+  background: var(--primary);
+  color: #fff;
+}
+
+/* Subtle themed scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* ============ Scroll reveal (no animation library) ============
+   Hiding is scoped to [data-reveal-active], set by an inline pre-paint script.
+   Base state is visible, so content is never lost without JavaScript. */
+[data-reveal-active] .reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+[data-reveal-active] .reveal-scale {
+  transform: translateY(10px) scale(0.97);
+}
+
+[data-reveal-active] .reveal-fade {
+  transform: none;
+}
+
+[data-reveal-active] .reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ============ Entrance & ambient keyframes ============ */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(22px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pop-in {
+  0% { opacity: 0; transform: scale(0.9); }
+  70% { transform: scale(1.03); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes float-soft {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes drift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(18px, -14px) scale(1.06); }
+  66% { transform: translate(-14px, 12px) scale(0.97); }
+}
+
+@keyframes pan-gradient {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes shine-sweep {
+  from { transform: translateX(-130%) skewX(-12deg); }
+  to { transform: translateX(230%) skewX(-12deg); }
+}
+
+@keyframes quiz-in {
+  from { opacity: 0; transform: translateY(12px) scale(0.992); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.35); opacity: 0.55; }
+}
+
+@keyframes drop-in {
+  from { opacity: 0; transform: translateY(-8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--anim-delay, 0ms);
+}
+
+.animate-pop-in {
+  animation: pop-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--anim-delay, 0ms);
+}
+
+.animate-drop-in {
+  animation: drop-in 0.25s ease-out both;
+}
+
+.animate-float-soft {
+  animation: float-soft 5s ease-in-out infinite;
+}
+
+.animate-blob {
+  animation: drift 12s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-pan {
+  background-size: 200% 200%;
+  animation: pan-gradient 9s ease-in-out infinite;
+}
+
+.quiz-slide {
+  animation: quiz-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ============ Signature deco utilities ============ */
+.text-gradient {
+  background: linear-gradient(100deg, var(--primary-text) 10%, var(--accent) 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.glass {
+  background: color-mix(in srgb, var(--surface) 78%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.card-lift {
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.card-lift:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lift);
+}
+
+.eyebrow-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--primary-soft) 65%, var(--surface));
+  padding: 0.3rem 0.9rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  /* Darker than --primary-text: the blended pill background needs extra contrast. */
+  color: #0e5462;
+}
+
+[data-theme="dark"] .eyebrow-pill {
+  color: var(--primary-text);
+}
+
+/* Shine sweep for primary CTAs */
+.btn-shine {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.btn-shine::after {
+  content: "";
+  position: absolute;
+  top: -20%;
+  bottom: -20%;
+  width: 45%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.38), transparent);
+  transform: translateX(-130%) skewX(-12deg);
+  pointer-events: none;
+}
+
+.btn-shine:hover::after {
+  animation: shine-sweep 0.8s ease;
+}
+
+.btn-press {
+  transition: transform 0.15s ease, filter 0.2s ease, box-shadow 0.3s ease;
+}
+
+.btn-press:active {
+  transform: scale(0.97);
+}
+
+/* Animated gradient ring for portrait frames */
+.portrait-frame {
+  position: relative;
+}
+
+.portrait-frame::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 2.2rem;
+  background: linear-gradient(135deg, var(--primary), var(--accent), var(--primary));
+  background-size: 250% 250%;
+  animation: pan-gradient 8s ease-in-out infinite;
+  opacity: 0.55;
+  z-index: 0;
+}
+
+/* Smooth accordion height animation (grid-rows trick) */
+.acc-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.acc-panel[data-open="true"] {
+  grid-template-rows: 1fr;
+}
+
+.acc-panel > div {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.acc-panel[data-open="false"] > div {
+  visibility: hidden;
+}
+
+/* Form error box with themed danger colors */
+.form-error {
+  background: var(--danger-bg);
+  color: var(--danger-text);
+  border-radius: 0.9rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+/* Progress-bar shimmer */
+.progress-fill {
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-fill::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.45) 50%, transparent 70%);
+  animation: shine-sweep 2.2s ease-in-out infinite;
+}
+
+/* Dotted pattern backdrop */
+.dot-grid {
+  background-image: radial-gradient(color-mix(in srgb, var(--primary) 22%, transparent) 1.5px, transparent 1.5px);
+  background-size: 22px 22px;
+}
+
+/* ============ Reduced motion: alive, never distracting ============ */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal,
+  [data-reveal-active] .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .acc-panel {
+    transition: none;
+  }
+}
